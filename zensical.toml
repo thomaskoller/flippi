@@ -1,0 +1,126 @@
+# Flipper Zero Lab — Zensical configuration
+# Docs: https://zensical.org/docs/
+
+[project]
+site_name = "Flipper Zero Lab"
+site_description = "An interactive, physics-first learning portal for the Flipper Zero — theory, code, and real-world labs for every signal type."
+site_author = "Flipper Zero Lab"
+site_url = "https://thomaskoller.github.io/flippi/"
+copyright = """
+Built for authorized security testing & education. Know your local laws.
+"""
+
+# Explicit navigation — a guided curriculum rather than alphabetical.
+nav = [
+  { "Home" = "index.md" },
+  { "Start Here" = [
+    { "Device Tour" = "getting-started/device-tour.md" },
+    { "Firmware, SD & CLI" = "getting-started/firmware-sd-cli.md" },
+    { "Ethics & Law" = "getting-started/ethics-and-law.md" },
+  ] },
+  { "Physics Primer" = [
+    { "The EM Spectrum" = "physics-primer/em-spectrum.md" },
+    { "Modulation" = "physics-primer/modulation.md" },
+  ] },
+  { "MicroPython" = [
+    { "Setup" = "micropython/setup.md" },
+    { "flipperzero API" = "micropython/flipperzero-api.md" },
+  ] },
+  { "Signals" = [
+    { "Sub-GHz Radio" = "signals/sub-ghz.md" },
+    { "125 kHz RFID" = "signals/rfid-125khz.md" },
+    { "NFC" = "signals/nfc.md" },
+    { "Infrared" = "signals/infrared.md" },
+    { "GPIO & Hardware" = "signals/gpio.md" },
+    { "iButton" = "signals/ibutton.md" },
+    { "Bad USB" = "signals/bad-usb.md" },
+    { "U2F" = "signals/u2f.md" },
+  ] },
+  { "Reference" = [
+    { "Glossary" = "reference/glossary.md" },
+    { "Resources" = "reference/resources.md" },
+  ] },
+]
+
+extra_css = ["stylesheets/extra.css"]
+extra_javascript = [
+  "javascripts/mathjax.js",
+  "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+  "javascripts/quiz.js",
+  "javascripts/physics-anim.js",
+  "javascripts/flipper-sim.js",
+]
+
+[project.theme]
+
+[[project.theme.palette]]
+scheme = "slate"
+primary = "deep orange"
+accent = "orange"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "deep orange"
+accent = "orange"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to dark mode"
+
+[project.theme.icon]
+logo = "lucide/radio"
+
+features = [
+  "announce.dismiss",
+  "content.code.annotate",
+  "content.code.copy",
+  "content.code.select",
+  "content.footnote.tooltips",
+  "content.tabs.link",
+  "content.tooltips",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.path",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+  "toc.follow",
+]
+
+# Markdown extensions (Zensical default rich set — math, admonitions, tabs, details).
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.def_list]
+[project.markdown_extensions.footnotes]
+[project.markdown_extensions.md_in_html]
+[project.markdown_extensions.toc]
+permalink = true
+[project.markdown_extensions.pymdownx.arithmatex]
+generic = true
+[project.markdown_extensions.pymdownx.betterem]
+[project.markdown_extensions.pymdownx.caret]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.emoji]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.keys]
+[project.markdown_extensions.pymdownx.magiclink]
+[project.markdown_extensions.pymdownx.mark]
+[project.markdown_extensions.pymdownx.smartsymbols]
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true
+[project.markdown_extensions.pymdownx.tasklist]
+custom_checkbox = true
+[project.markdown_extensions.pymdownx.tilde]

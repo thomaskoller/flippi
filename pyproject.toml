@@ -1,0 +1,14 @@
+[project]
+name = "flipper-zero-lab"
+version = "0.1.0"
+description = "An interactive, physics-first learning portal for the Flipper Zero, built with Zensical."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "zensical==0.0.43",
+]
+
+# This repository is a documentation site, not an importable Python package,
+# so tell uv not to try to build/install the project itself.
+[tool.uv]
+package = false
