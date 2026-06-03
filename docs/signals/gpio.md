@@ -5,6 +5,16 @@ icon: lucide/circuit-board
 # GPIO & Hardware
 
 <span class="fz-chip run">PYTHON</span>
+
+!!! tip "In plain English"
+    **One sentence:** the row of pins on top of the Flipper turns it into a tiny **Arduino** —
+    you can wire up LEDs, buttons, and sensors and control them with code.
+    **Everyday analogy:** the Flipper's "Lego studs" for electronics. Each pin can switch
+    on/off, read a knob, or talk to a chip.
+    **You meet it in:** breadboard projects, hobby electronics, talking to add-on modules.
+    **What the Flipper actually does:** real **MicroPython** controls digital I/O, interrupts,
+    analog input (ADC), PWM, and two UARTs — almost everything in this chapter is runnable.
+
 The GPIO header turns the Flipper into a general-purpose hacking microcontroller, and it's
 **fully exposed to MicroPython** — digital I/O, interrupts, ADC, PWM, and two UARTs. This is
 the most "Arduino-like" chapter, and almost everything here runs as real code.

@@ -5,9 +5,20 @@ icon: lucide/scan-line
 # 125 kHz RFID (Low-Frequency)
 
 <span class="fz-chip file">FILE</span> <span class="fz-chip cli">CLI</span>
+
+!!! tip "In plain English"
+    **One sentence:** the thick white "tap" card or fob on your lanyard that opens a door —
+    the Flipper can read it and copy it onto a blank.
+    **Everyday analogy:** a wireless barcode. The card just shouts its number when a reader
+    powers it up; there's no password.
+    **You meet it in:** office/apartment door fobs, gym membership cards, parking passes, the
+    chunky white keycards.
+    **What the Flipper actually does:** reads the ID, emulates it, and can **clone it onto a
+    blank T5577** — because these cards have no security at all.
+
 The thick white "prox" card clipped to a million lanyards is low-frequency RFID. The
-Flipper reads, saves, and emulates the common LF families (EM4100, HID Prox, Indala). As
-with Sub-GHz, this lives entirely in firmware — **no MicroPython**.
+Flipper reads, saves, and emulates the common LF families (EM4100, HID Prox, Indala, and
+many more). As with Sub-GHz, this lives entirely in firmware — **no MicroPython**.
 
 ## 1 · Theory & Physics
 

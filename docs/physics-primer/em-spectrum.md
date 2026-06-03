@@ -4,35 +4,51 @@ icon: lucide/waves
 
 # The Electromagnetic Spectrum
 
-Almost everything the Flipper does — Sub-GHz, NFC, RFID, infrared, even the BLE link — is
-*the same physics at different frequencies*: oscillating electric and magnetic fields. If
-you have a physics background this is a refresher; the payoff is that the per-signal
-chapters can then just say "this is near-field at 13.56 MHz" and you'll know exactly what
-that implies.
+!!! tip "In plain English"
+    Every radio trick the Flipper does is **the same wave at a different size**. A door fob,
+    a garage remote and a TV remote differ mostly in **frequency** — and that one number
+    decides the antenna size and whether you must *tap* the thing or can grab it *from across
+    the street*. This page puts numbers on that. New here? Do the three
+    [101 pages](waves-101.md) first.
+
+Almost everything the Flipper does — Sub-GHz, NFC, RFID, infrared, even the Bluetooth link —
+is *the same physics at different frequencies*: a wiggling wave of electric and magnetic
+fields. The payoff of this page is that the per-signal chapters can then just say "this is
+near-field at 13.56 MHz" and you'll know exactly what that implies.
 
 ## One wave, many names
 
-A plane electromagnetic wave propagating in $z$ has orthogonal, in-phase electric and
-magnetic fields:
-
-$$
-\mathbf{E}(z,t) = E_0\,\hat{\mathbf{x}}\,\cos(kz - \omega t), \qquad
-\mathbf{B}(z,t) = \frac{E_0}{c}\,\hat{\mathbf{y}}\,\cos(kz - \omega t)
-$$
-
-with angular frequency $\omega = 2\pi f$, wavenumber $k = 2\pi/\lambda$, and the
-defining relationship
-
-$$
-c = f\lambda \approx 3.0\times10^{8}\ \text{m/s}.
-$$
+A radio wave is an **electric field** and a **magnetic field** taking turns, locked together,
+racing outward at the speed of light. They peak together and sit at right angles to each
+other — but you don't need that detail to use the device; the picture below is enough.
 
 <canvas class="anim" data-type="emwave"></canvas>
-<p class="fz-figcaption">Orthogonal E (bright) and B (dim) fields propagating at c. They are in phase — both peak together.</p>
+<p class="fz-figcaption">The electric field (bright) and magnetic field (dim) travel together at the speed of light, c.</p>
 
-That single equation $c = f\lambda$ is the backbone of the whole device. It tells you the
-**wavelength** for each radio, which in turn tells you the **antenna size** and whether
-you're in the *near field* or *far field*.
+The one relationship that runs the whole device is the friendly formula from
+[Waves 101](waves-101.md):
+
+$$
+c = f\lambda \approx 3.0\times10^{8}\ \text{m/s}
+$$
+
+In words: **(speed of light) = (frequency) × (wavelength)**, and for radio the speed is always
+the same. So if you know the frequency, you instantly know the wavelength
+($\lambda = c/f$) — and the wavelength tells you the **antenna size** and whether you're in
+the *near field* (tap to read) or *far field* (works across a room).
+
+??? note "Go deeper: the actual field equations"
+    A plane electromagnetic wave propagating in $z$ has orthogonal, in-phase electric and
+    magnetic fields:
+
+    $$
+    \mathbf{E}(z,t) = E_0\,\hat{\mathbf{x}}\,\cos(kz - \omega t), \qquad
+    \mathbf{B}(z,t) = \frac{E_0}{c}\,\hat{\mathbf{y}}\,\cos(kz - \omega t)
+    $$
+
+    with angular frequency $\omega = 2\pi f$ and wavenumber $k = 2\pi/\lambda$. The magnetic
+    field is smaller than the electric one by exactly a factor of $c$, and both peak at the
+    same instant (they're *in phase*).
 
 ## The bands the Flipper lives in
 
@@ -48,11 +64,24 @@ Notice the enormous span: the same $c=f\lambda$ stretches from kilometre-scale
 wavelengths (125 kHz) to sub-micron light (IR). That's why the front-ends are so
 different — you cannot use one antenna for all of them.
 
+!!! example "Everyday-scale intuition"
+    - **125 kHz RFID** waves are ~2.4 km long — *stadium-sized*. Your few-centimetre fob can
+      barely interact with such a giant wave, so it only works when you basically **hug** the
+      reader. (That's a feature: nobody reads your fob from across the lobby.)
+    - **433 MHz Sub-GHz** waves are ~70 cm — *arm's-length*. They radiate happily and fly
+      **across the street**, which is why a garage remote works from your driveway… and why a
+      Flipper can capture one from a distance.
+    - **Infrared** is light at ~940 nm — so small it behaves like a beam. That's why a TV
+      remote needs roughly **line of sight**, like a torch.
+
 ## Near field vs. far field — the single most useful distinction
 
 The boundary is roughly one wavelength (more precisely $\sim\lambda/2\pi$ for the reactive
 near field). It explains *why RFID/NFC are "tap" technologies and Sub-GHz is "across the
 street."*
+
+<canvas class="anim" data-type="nearfar"></canvas>
+<p class="fz-figcaption">Left: near-field coils only "talk" when they almost touch. Right: a far-field antenna sends a wave that reaches clear across the room.</p>
 
 === "Near field (RFID, NFC)"
 
@@ -87,19 +116,38 @@ street."*
     to be at the reader. Far-field links can be captured from across a parking lot. The
     physics, not the protocol, sets the baseline threat distance.
 
+!!! warning "A note on the Flipper's Bluetooth"
+    BLE (2.4 GHz) is in the far-field column above, but the **stock Flipper does not sniff or
+    scan Bluetooth**. Its BLE radio is locked down to two jobs: talking to the phone app, and
+    acting as a wireless keyboard/remote (HID). There's no general Bluetooth capture on
+    official firmware — don't expect one. ([Flipper BLE docs](https://docs.flipper.net/zero/bluetooth).)
+
 ## Decibels: dB, dBm, and why everyone uses them
 
-RF spans many orders of magnitude, so we work logarithmically. A **ratio** in decibels:
+Radio power ranges over **billions-to-one**, so writing it out in plain numbers is hopeless.
+Engineers compress that range with **decibels (dB)** — a scale where you *add* instead of
+*multiply*. The only two rules of thumb you actually need:
 
-$$
-G_{\text{dB}} = 10\log_{10}\!\left(\frac{P_{\text{out}}}{P_{\text{in}}}\right)
-$$
+- **+3 dB ≈ twice the power.** −3 dB ≈ half.
+- **+10 dB = ten times the power.** −10 dB = one tenth.
 
-An **absolute** power referenced to 1 mW is **dBm**:
+So "+20 dB" is just 10×10 = **100×**, and "−30 dB" is one-thousandth. **dBm** is the same
+idea but measured against a fixed reference of 1 milliwatt, so it gives an *absolute* power:
+$0\ \text{dBm} = 1\ \text{mW}$, $+10\ \text{dBm} = 10\ \text{mW}$,
+$-30\ \text{dBm} = 1\ \mu\text{W}$.
 
-$$
-P_{\text{dBm}} = 10\log_{10}\!\left(\frac{P}{1\ \text{mW}}\right)
-$$
+??? note "Go deeper: the logarithms behind it"
+    A **ratio** in decibels:
+
+    $$
+    G_{\text{dB}} = 10\log_{10}\!\left(\frac{P_{\text{out}}}{P_{\text{in}}}\right)
+    $$
+
+    An **absolute** power referenced to 1 mW is **dBm**:
+
+    $$
+    P_{\text{dBm}} = 10\log_{10}\!\left(\frac{P}{1\ \text{mW}}\right)
+    $$
 
 Handy anchors: $0\ \text{dBm} = 1\ \text{mW}$, $+10\ \text{dBm} = 10\ \text{mW}$,
 $-30\ \text{dBm} = 1\ \mu\text{W}$. Every **+3 dB ≈ doubling** of power, every

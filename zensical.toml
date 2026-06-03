@@ -18,7 +18,10 @@ nav = [
     { "Firmware, SD & CLI" = "getting-started/firmware-sd-cli.md" },
     { "Ethics & Law" = "getting-started/ethics-and-law.md" },
   ] },
-  { "Physics Primer" = [
+  { "Physics — from Zero" = [
+    { "Waves & Vibrations 101" = "physics-primer/waves-101.md" },
+    { "Electricity & Signals 101" = "physics-primer/electricity-signals-101.md" },
+    { "How Radios Talk" = "physics-primer/radio-101.md" },
     { "The EM Spectrum" = "physics-primer/em-spectrum.md" },
     { "Modulation" = "physics-primer/modulation.md" },
   ] },
