@@ -61,6 +61,10 @@ project, used nominatively for education, with no affiliation or endorsement.
 
 ## License & disclaimer
 
+Released under the **[MIT License](LICENSE)** — © 2026 Thomas Koller. The adapted
+mp-flipper snippets remain under their original MIT License (© 2024 Oliver Fabel), as
+noted above and in `LICENSE`.
+
 Educational content for **authorized** security testing only. Many techniques described
 here are illegal to perform against devices and systems you do not own or have explicit
 permission to test. Know your local laws.
