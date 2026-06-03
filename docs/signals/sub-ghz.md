@@ -5,6 +5,18 @@ icon: lucide/satellite-dish
 # Sub-GHz Radio
 
 <span class="fz-chip file">FILE</span> <span class="fz-chip cli">CLI</span>
+
+!!! tip "In plain English"
+    **One sentence:** the short-range radio that runs garage doors, gate remotes, and cheap
+    wireless gadgets — the Flipper can listen to it and play it back.
+    **Everyday analogy:** a universal "record and replay" button for the invisible beeps your
+    remotes send.
+    **You meet it in:** garage-door remotes, wireless doorbells, car key fobs, remote-control
+    mains sockets, weather stations.
+    **What the Flipper actually does:** captures and replays **static (fixed) codes** like
+    cheap sockets and old gates. **Modern rolling codes** (most cars, modern garages) it can
+    *hear* but **not clone** — by design.
+
 The Sub-GHz app is the Flipper's most famous feature: capture, analyse, and replay the
 short-range radio that runs garage doors, gate remotes, wireless doorbells, weather
 stations, and cheap remote sockets. The radio itself is a **TI CC1101** transceiver — and
@@ -41,15 +53,24 @@ The Flipper exposes these as **presets**, which set the demodulator and bandwidt
 
 | Preset | Modulation | Notes |
 |---|---|---|
-| `AM270` | OOK, 270 kHz BW | narrow, for clean signals |
+| `AM270` | OOK, 270.83 kHz BW | narrow, for clean signals |
 | `AM650` | OOK, 650 kHz BW | wide, the common default |
-| `FM238` | 2-FSK, 2.38 kHz dev | |
-| `FM476` | 2-FSK, 4.76 kHz dev | |
+| `FM238` | 2-FSK, 2.38 kHz deviation | narrow FSK |
+| `FM476` | 2-FSK, 47.61 kHz deviation | wide FSK |
+
+!!! warning "Receiving is wider than transmitting"
+    The CC1101 can *listen* across the full 300–348 / 387–464 / 779–928 MHz ranges, but the
+    official firmware only *transmits* on **region-approved frequencies** — it deliberately
+    refuses to key the radio on bands you're not allowed to use where you are.
+    ([Flipper frequency docs](https://docs.flipper.net/zero/sub-ghz/frequencies).)
 
 ### Static codes vs. rolling codes (the crux)
 
 This single distinction decides whether a capture is *useful* and whether an attack is even
 possible:
+
+<canvas class="anim" data-type="rollingcode"></canvas>
+<p class="fz-figcaption">Static code: the same value every press, so a recording replays forever. Rolling code: a counter ticks up each press, so yesterday's recording is already "spent."</p>
 
 === "Static / fixed code"
 
@@ -63,6 +84,13 @@ possible:
     counter (KeeLoq, AUT64, etc.). The receiver accepts only codes ahead of its counter
     within a window. A naive replay **fails** — the captured code is already "used." Modern
     cars and garage openers. **Not replayable** by capture-and-resend.
+
+    !!! note "Stock firmware does not clone rolling codes"
+        The official Flipper firmware can **receive and recognise** many rolling-code
+        protocols, but it deliberately **does not implement the encoder** to forge the next
+        valid code — so it cannot clone or open a rolling-code device. (Third-party firmwares
+        add partial "custom button" support for a few brands, but it's incomplete and out of
+        scope here.) This is the security working, not a missing feature.
 
 !!! danger "Don't replay what isn't yours"
     Even where replay is *technically* possible, doing it against a gate, car, or building

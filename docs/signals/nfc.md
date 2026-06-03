@@ -5,6 +5,18 @@ icon: lucide/nfc
 # NFC (13.56 MHz)
 
 <span class="fz-chip file">FILE</span> <span class="fz-chip cli">CLI</span>
+
+!!! tip "In plain English"
+    **One sentence:** the "tap" chip in your bank card, phone, and travel card — the Flipper
+    can read it and inspect what's inside.
+    **Everyday analogy:** a card reader you can carry, that shows you the card's "name tag"
+    and (for weak cards) its contents.
+    **You meet it in:** contactless bank cards, subway/transit cards, phone tap-to-pay, hotel
+    key cards, office badges, passports.
+    **What the Flipper actually does:** reads the card's ID and, for old **MIFARE Classic**
+    cards, can recover keys and dump data. It **cannot** clone a payment card or fool a
+    properly-secured reader — those use live cryptography it can't replay.
+
 NFC is the grown-up sibling of 125 kHz RFID: same near-field idea, but at **13.56 MHz**
 with real protocols and (sometimes) real cryptography. Transit cards, hotel keys, office
 badges, contactless payment cards, passports. The front-end is an **ST25R3916**.
@@ -31,10 +43,16 @@ EM4100), enough for multi-step protocols, mutual authentication, and kilobytes o
 |---|---|---|
 | ISO 14443**A** | MIFARE Classic/Ultralight, NTAG, most badges | the common case |
 | ISO 14443**B** | some ID cards, passports | different modulation/anticollision |
-| FeliCa (JIS X 6319) | Japanese transit/pay | Sony's flavour |
+| FeliCa (JIS X 6319) | Japanese transit/pay | Sony's flavour — **read + UID emulation only** |
 
 Every type starts with **anticollision** to single out one tag and learn its **UID**, then
 proceeds to type-specific commands.
+
+!!! note "What the Flipper supports per card type"
+    Officially the Flipper reads ISO 14443-3A/3B/4A, **MIFARE Classic**, **MIFARE Ultralight /
+    Ultralight C**, **NTAG**, and **MIFARE DESFire** (read of unprotected data, limited
+    emulation). **FeliCa** is **read + UID-level emulation only** — not full emulation. ([NFC
+    docs](https://docs.flipper.net/zero/nfc).)
 
 ### MIFARE Classic and why it's a teaching classic
 
@@ -83,6 +101,13 @@ recover keys, and many deployments still use factory defaults like `FFFFFFFFFFFF
   sectors; what it can't crack it leaves blank.
 - **Detect Reader** turns the Flipper into a tag to harvest reader nonces for the
   `mfkey32`/`nested` key-recovery workflow — *for your own cards*.
+
+!!! example "Magic cards: when emulation isn't enough"
+    A normal MIFARE Classic card has a **read-only** manufacturer block 0 (the UID is fixed at
+    the factory), so the Flipper's emulation can't *become* an arbitrary card on real hardware.
+    **Magic cards** are special blank tags whose block 0 (and thus UID) **is writable**. The
+    Flipper can write a saved dump to **Gen1A, Gen2, and Gen4 ("UMC")** magic cards, producing
+    a physical clone — for cards you own. ([Magic-card docs](https://docs.flipper.net/zero/nfc/magic-cards).)
 
 ### Anatomy of a `.nfc` file
 

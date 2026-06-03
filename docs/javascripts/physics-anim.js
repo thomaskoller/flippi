@@ -4,12 +4,20 @@
 //   <canvas class="anim" data-type="emwave" data-caption="..."></canvas>
 //
 // Supported data-type values:
-//   emwave   — propagating electromagnetic wave (orthogonal E and B fields)
-//   ask      — OOK / ASK: a bitstream gating a carrier on and off
-//   fsk      — FSK: a bitstream shifting the carrier between two frequencies
-//   ir       — 38 kHz IR carrier gated by NEC-style mark/space pulses
-//   nfc      — 13.56 MHz reader field + tag load modulation
-//   rfid     — 125 kHz inductive coupling between reader and tag coils
+//   emwave      — propagating electromagnetic wave (orthogonal E and B fields)
+//   ask         — OOK / ASK: a bitstream gating a carrier on and off
+//   fsk         — FSK: a bitstream shifting the carrier between two frequencies
+//   psk         — BPSK: the carrier flips phase 180° at each bit boundary
+//   manchester  — Manchester line code: a transition in the middle of every bit
+//   ir          — 38 kHz IR carrier gated by NEC-style mark/space pulses
+//   nfc         — 13.56 MHz reader field + tag load modulation
+//   rfid        — 125 kHz inductive coupling between reader and tag coils
+//   sine        — a single sine with amplitude bracket + wavelength ruler (beginner)
+//   freqcompare — two stacked sines, low vs high frequency (beginner)
+//   digital     — a clean square wave spelling 1 0 1 0 with bit labels (beginner)
+//   current     — charge "dots" drifting through a wire (voltage = pressure) (beginner)
+//   rollingcode — static code (same value) vs rolling code (counter increments)
+//   nearfar     — "hug to read" coils vs an antenna shouting across the room
 //
 // Animations pause when offscreen and honor prefers-reduced-motion (single static frame).
 
@@ -310,7 +318,391 @@
     ctx.globalAlpha = 1;
   }
 
-  const RENDERERS = { emwave, ask, fsk, ir, nfc, rfid };
+  // --- beginner renderers -------------------------------------------------
+
+  // A single travelling sine with an amplitude bracket and a wavelength ruler.
+  function sine(ctx, w, h, t, c) {
+    const mid = h / 2;
+    const A = h * 0.3;
+    const wavelenPx = w * 0.34; // one full wave occupies ~1/3 of the canvas
+    const k = (2 * Math.PI) / wavelenPx;
+    const speed = 1.4;
+    axis(ctx, w, h, c);
+
+    // the wave
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const y = mid - A * Math.sin(k * x - speed * t);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // amplitude bracket on the left (crest to mid)
+    const ax = 26;
+    ctx.strokeStyle = c.fg;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ax, mid);
+    ctx.lineTo(ax, mid - A);
+    ctx.moveTo(ax - 4, mid);
+    ctx.lineTo(ax + 4, mid);
+    ctx.moveTo(ax - 4, mid - A);
+    ctx.lineTo(ax + 4, mid - A);
+    ctx.stroke();
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("amplitude", ax + 6, mid - A / 2 + 4);
+
+    // wavelength ruler along the bottom (one full wavelength)
+    const ry = h - 16;
+    const rx0 = w * 0.5;
+    const rx1 = rx0 + wavelenPx;
+    ctx.strokeStyle = c.primary;
+    ctx.beginPath();
+    ctx.moveTo(rx0, ry);
+    ctx.lineTo(rx1, ry);
+    ctx.moveTo(rx0, ry - 4);
+    ctx.lineTo(rx0, ry + 4);
+    ctx.moveTo(rx1, ry - 4);
+    ctx.lineTo(rx1, ry + 4);
+    ctx.stroke();
+    ctx.fillStyle = c.primary;
+    ctx.fillText("one wavelength (λ)", rx0 + 8, ry - 6);
+  }
+
+  // Two stacked sines: a slow (low-frequency) one and a fast (high-frequency) one.
+  function freqcompare(ctx, w, h, t, c) {
+    const speed = 1.6;
+    const A = h * 0.16;
+
+    function row(yMid, freq, label, col) {
+      ctx.strokeStyle = c.faint;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, yMid);
+      ctx.lineTo(w, yMid);
+      ctx.stroke();
+
+      const k = (2 * Math.PI * freq) / w;
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += 2) {
+        const y = yMid - A * Math.sin(k * x - speed * t * freq);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = c.fg;
+      ctx.font = "12px system-ui, sans-serif";
+      ctx.fillText(label, 6, yMid - A - 6);
+    }
+
+    row(h * 0.3, 2, "low frequency — slow wiggle (bass / dog can't hear)", c.primary);
+    row(h * 0.74, 7, "high frequency — fast wiggle (whistle / treble)", c.accent);
+  }
+
+  // A clean digital square wave spelling out the bits, with labels.
+  function digital(ctx, w, h, t, c) {
+    const bits = [1, 0, 1, 0, 1, 1, 0, 0];
+    const mid = h / 2;
+    const A = h * 0.26;
+    const bw = w / bits.length;
+    const hi = mid - A;
+    const lo = mid + A;
+    axis(ctx, w, h, c);
+
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    let prevY = bits[0] ? hi : lo;
+    ctx.moveTo(0, prevY);
+    for (let i = 0; i < bits.length; i++) {
+      const y = bits[i] ? hi : lo;
+      const x0 = i * bw;
+      const x1 = (i + 1) * bw;
+      if (y !== prevY) ctx.lineTo(x0, y); // vertical edge
+      ctx.lineTo(x1, y);
+      prevY = y;
+    }
+    ctx.stroke();
+
+    // bit labels
+    ctx.fillStyle = c.fg;
+    ctx.font = "13px ui-monospace, monospace";
+    for (let i = 0; i < bits.length; i++) {
+      ctx.fillText(String(bits[i]), i * bw + bw / 2 - 3, h - 8);
+    }
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("1 = on (high)", 6, 16);
+    ctx.fillText("0 = off (low)", 6, h - 24);
+  }
+
+  // Charge "dots" drifting through a wire segment. Voltage = pressure pushing them.
+  function current(ctx, w, h, t, c) {
+    const mid = h / 2;
+    const wireTop = mid - 14;
+    const wireBot = mid + 14;
+
+    // the wire
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, wireTop);
+    ctx.lineTo(w, wireTop);
+    ctx.moveTo(0, wireBot);
+    ctx.lineTo(w, wireBot);
+    ctx.stroke();
+
+    // drifting charges
+    const n = 14;
+    const speed = 60; // px/s
+    ctx.fillStyle = c.accent;
+    for (let i = 0; i < n; i++) {
+      const x = ((i * (w / n) + t * speed) % (w + 20)) - 10;
+      ctx.beginPath();
+      ctx.arc(x, mid, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // labels: battery pressure on the left, current arrow
+    ctx.fillStyle = c.primary;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("voltage = pressure pushing →", 8, wireTop - 8);
+    ctx.fillText("current = how many charges flow past per second", 8, wireBot + 20);
+  }
+
+  // BPSK: amplitude/frequency fixed, the carrier flips phase 180° at bit edges.
+  function psk(ctx, w, h, t, c) {
+    const mid = h / 2;
+    const A = h * 0.3;
+    const bitWidth = w / BITS.length;
+    const scroll = (t * 40) % bitWidth;
+    axis(ctx, w, h, c);
+
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const b = bitAt((x + scroll) / bitWidth);
+      const y = h * 0.16 - b * h * 0.1;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 1) {
+      const b = bitAt((x + scroll) / bitWidth);
+      const phase = b ? 0 : Math.PI; // 180° flip for a "0"
+      const y = mid - A * Math.sin(x * 0.5 + phase);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("data", 6, h * 0.1);
+    ctx.fillText("BPSK carrier — note the phase flip on each '0'", 6, mid + A + 14);
+  }
+
+  // Manchester: every bit has a mid-bit transition (down=1, up=0 by IEEE convention here).
+  function manchester(ctx, w, h, t, c) {
+    const bits = [1, 0, 1, 1, 0, 0, 1, 0];
+    const mid = h / 2;
+    const A = h * 0.24;
+    const bw = w / bits.length;
+    const hi = mid - A;
+    const lo = mid + A;
+    axis(ctx, w, h, c);
+
+    // raw data line (faint, on top)
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < bits.length; i++) {
+      const y = h * 0.16 - (bits[i] ? h * 0.06 : 0);
+      ctx.moveTo(i * bw, y);
+      ctx.lineTo((i + 1) * bw, y);
+    }
+    ctx.stroke();
+
+    // Manchester encoded line: each bit = half low/half high (or vice versa)
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, bits[0] ? hi : lo);
+    for (let i = 0; i < bits.length; i++) {
+      const x0 = i * bw;
+      const xm = x0 + bw / 2;
+      const x1 = x0 + bw;
+      const first = bits[i] ? hi : lo; // 1 → high then low
+      const second = bits[i] ? lo : hi;
+      ctx.lineTo(x0, first);
+      ctx.lineTo(xm, first);
+      ctx.lineTo(xm, second); // mid-bit transition
+      ctx.lineTo(x1, second);
+    }
+    ctx.stroke();
+
+    // bit ticks
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 1;
+    for (let i = 1; i < bits.length; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * bw, hi - 6);
+      ctx.lineTo(i * bw, lo + 6);
+      ctx.stroke();
+    }
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("raw bits", 6, h * 0.1);
+    ctx.fillText("Manchester: a flip in the MIDDLE of every bit", 6, lo + 18);
+  }
+
+  // Static code (same number forever) vs rolling code (counter ticks up each press).
+  function rollingcode(ctx, w, h, t, c) {
+    const press = Math.floor(t / 1.2); // a new "button press" every 1.2 s
+    const half = w / 2;
+
+    ctx.font = "13px ui-monospace, monospace";
+    ctx.textAlign = "left";
+
+    // divider
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(half, 10);
+    ctx.lineTo(half, h - 10);
+    ctx.stroke();
+
+    // left: static
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("STATIC code", 12, 20);
+    ctx.fillStyle = c.accent;
+    ctx.font = "15px ui-monospace, monospace";
+    for (let i = 0; i < 3; i++) {
+      ctx.globalAlpha = i === press % 3 ? 1 : 0.35;
+      ctx.fillText("press → A1B2C3", 12, 48 + i * 26);
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = c.faint;
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillText("same every time → replay works", 12, h - 12);
+
+    // right: rolling
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("ROLLING code", half + 12, 20);
+    ctx.fillStyle = c.primary;
+    ctx.font = "15px ui-monospace, monospace";
+    for (let i = 0; i < 3; i++) {
+      const n = press + i - 2;
+      ctx.globalAlpha = i === 2 ? 1 : 0.35;
+      const code = (0x4f3a01 + n * 0x1d7) >>> 0;
+      ctx.fillText("press → " + code.toString(16).toUpperCase().slice(0, 6), half + 12, 48 + i * 26);
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = c.faint;
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillText("never repeats → replay fails", half + 12, h - 12);
+    ctx.textAlign = "left";
+  }
+
+  // Near field (hug-to-read coils) vs far field (antenna reaching across the room).
+  function nearfar(ctx, w, h, t, c) {
+    const half = w / 2;
+    const cy = h * 0.5;
+
+    // divider
+    ctx.strokeStyle = c.faint;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(half, 10);
+    ctx.lineTo(half, h - 10);
+    ctx.stroke();
+
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = c.fg;
+    ctx.fillText("NEAR field — must hug", 12, 18);
+    ctx.fillText("FAR field — shouts across", half + 12, 18);
+
+    // left: two close coils with pulsing coupling
+    const lx = half * 0.36;
+    const rx = half * 0.64;
+    ctx.strokeStyle = c.fg;
+    ctx.lineWidth = 2;
+    [lx, rx].forEach((x) => {
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.ellipse(x + i * 3, cy, 7, h * 0.22, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+    const a = 0.35 + 0.55 * Math.abs(Math.sin(t * 4));
+    ctx.strokeStyle = c.accent;
+    ctx.globalAlpha = a;
+    for (let k = 1; k <= 2; k++) {
+      const sp = k * h * 0.13;
+      ctx.beginPath();
+      ctx.moveTo(lx, cy - sp);
+      ctx.bezierCurveTo((lx + rx) / 2, cy - sp - 16, (lx + rx) / 2, cy - sp - 16, rx, cy - sp);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(lx, cy + sp);
+      ctx.bezierCurveTo((lx + rx) / 2, cy + sp + 16, (lx + rx) / 2, cy + sp + 16, rx, cy + sp);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // right: antenna emitting expanding rings toward a far receiver
+    const ax = half + 24;
+    const rxr = w - 28;
+    ctx.strokeStyle = c.fg;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ax, cy - h * 0.26);
+    ctx.lineTo(ax, cy + h * 0.18);
+    ctx.stroke();
+    ctx.fillStyle = c.primary;
+    for (let k = 0; k < 4; k++) {
+      const phase = (t * 0.6 + k / 4) % 1;
+      const r = phase * (rxr - ax);
+      ctx.globalAlpha = 0.6 * (1 - phase);
+      ctx.strokeStyle = c.primary;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(ax, cy - h * 0.04, r, -Math.PI / 2.6, Math.PI / 2.6);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // far receiver
+    ctx.fillStyle = c.fg;
+    ctx.fillRect(rxr - 4, cy - 10, 4, 20);
+  }
+
+  const RENDERERS = {
+    emwave,
+    ask,
+    fsk,
+    psk,
+    manchester,
+    ir,
+    nfc,
+    rfid,
+    sine,
+    freqcompare,
+    digital,
+    current,
+    rollingcode,
+    nearfar,
+  };
 
   function animate(canvas) {
     const type = canvas.dataset.type;

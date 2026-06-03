@@ -5,6 +5,17 @@ icon: lucide/shield-check
 # U2F / FIDO
 
 <span class="fz-chip cli">USB/BLE</span>
+
+!!! tip "In plain English"
+    **One sentence:** the Flipper as a **login security key** — the tap-to-confirm second
+    factor that stops phishing, like a YubiKey.
+    **Everyday analogy:** a physical key for your online accounts. The website asks "prove
+    it's really you," the Flipper signs the challenge, you tap to confirm.
+    **You meet it in:** the "Security key" 2FA option on GitHub, Google, Microsoft, etc.
+    **What the Flipper actually does:** acts as a FIDO U2F authenticator over USB/BLE. Note it
+    stores keys in normal storage (not a tamper-proof secure element), so treat it as a
+    *learning* key, not a high-security one.
+
 A refreshing change of pace: this is the Flipper as a **defensive** tool. It can act as a
 **U2F/FIDO** hardware security key for two-factor authentication — a YubiKey-style second
 factor for your own GitHub, Google, etc. Understanding it also teaches the public-key
@@ -61,6 +72,11 @@ last value it saw; if it ever sees a counter go *backwards or stall*, that hints
 The U2F app presents the Flipper to the host (over USB, and on some setups BLE) as a FIDO
 authenticator. When a site needs a touch, the Flipper prompts you to confirm — that press is
 the "user presence" check.
+
+!!! note "Windows 11 caveat"
+    The Flipper isn't a certified FIDO device, so **Windows 11 may refuse it for Windows
+    sign-in** specifically. It still works fine as a 2FA key for websites (GitHub, Google,
+    etc.) in your browser. ([U2F docs](https://docs.flipper.net/zero/u2f).)
 
 <div class="flipper-sim" data-title="U2F app">
 <script type="application/json">

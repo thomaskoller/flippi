@@ -5,6 +5,18 @@ icon: lucide/usb
 # Bad USB (HID Injection)
 
 <span class="fz-chip file">FILE</span>
+
+!!! tip "In plain English"
+    **One sentence:** a keyboard that types by itself — plug the Flipper into a PC and it
+    machine-guns pre-written keystrokes faster than any human.
+    **Everyday analogy:** an autopilot for your keyboard. To the computer it's just a normal
+    keyboard, so it's trusted instantly.
+    **You meet it in:** IT automation, demos, and — in the wrong hands — "drop a USB stick"
+    attacks. (Here, only ever against a machine **you own**.)
+    **What the Flipper actually does:** acts as a USB HID keyboard and runs a **DuckyScript**
+    text file of keystrokes. It can't escalate privileges — it's limited to whatever the
+    logged-in user can already type.
+
 Plug the Flipper into a computer's USB-C port and it can pretend to be a **keyboard**,
 typing at hundreds of words per minute. This is the classic "Rubber Ducky" attack, driven by
 **DuckyScript** payload files. There's no exotic RF here — the physics is just USB — but it's

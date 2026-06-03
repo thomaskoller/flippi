@@ -5,6 +5,17 @@ icon: lucide/key-round
 # iButton (1-Wire)
 
 <span class="fz-chip file">FILE</span> <span class="fz-chip cli">CLI</span>
+
+!!! tip "In plain English"
+    **One sentence:** the round metal "magic button" key you touch to an apartment-intercom
+    pad — the Flipper can read it and copy it onto a blank.
+    **Everyday analogy:** a door key that works by *touching* two metal dots together instead
+    of a wireless tap. Zero range — it must physically touch.
+    **You meet it in:** apartment-block intercom keys, some lifts and gates, a few access
+    systems (the little silver coin on a keyring).
+    **What the Flipper actually does:** reads the key's number and writes it to a blank iButton
+    or compatible fob. Dallas keys clone fully; **Cyfral/Metakom** are **UID-only**.
+
 The little round metal "coin" key for intercoms and some access systems is an **iButton** —
 a Dallas **1-Wire** device read by physical contact. Firmware handles the protocol; the
 *electrical* 1-Wire concept overlaps with what MicroPython can bit-bang on GPIO, which makes
@@ -38,10 +49,11 @@ which is why understanding 1-Wire pays off beyond iButton.
 | Type | Detail |
 |---|---|
 | **DS1990A / Dallas** | 64-bit ROM: 8-bit family code + 48-bit unique serial + 8-bit CRC. **Static, unauthenticated** — a wired cousin of EM4100. |
-| **Cyfral / Metakom** | Soviet-era intercom standards still common in Eastern Europe; different bit framing. |
+| **Cyfral / Metakom** | Soviet-era intercom standards still common in Eastern Europe; different bit framing. The Flipper supports these **UID-only**. |
 
 For a DS1990A the entire "secret" is that 64-bit ROM — no challenge/response. Read it once,
-emulate forever.
+emulate forever. (Official iButton support: Dallas **DS1990/DS1992/DS1996/DS1971**, plus
+Cyfral and Metakom at UID level — see the [iButton docs](https://docs.flipper.net/zero/ibutton).)
 
 ## 2 · On the Flipper
 

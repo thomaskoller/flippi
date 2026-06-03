@@ -5,6 +5,17 @@ icon: lucide/flashlight
 # Infrared
 
 <span class="fz-chip run">PYTHON</span> <span class="fz-chip file">FILE</span>
+
+!!! tip "In plain English"
+    **One sentence:** the invisible "flashlight" your TV remote uses — the Flipper can learn
+    any remote's buttons and become a universal remote.
+    **Everyday analogy:** Morse code with an invisible torch. The remote blinks a near-infrared
+    LED in a pattern; the TV reads the blinks.
+    **You meet it in:** TV remotes, air-conditioner remotes, soundbars, projectors, fans.
+    **What the Flipper actually does:** records the blink-pattern of any remote button and
+    plays it back — and it has a giant **built-in universal database** for TVs/ACs you've
+    never even seen.
+
 The first chapter where you write **real, runnable MicroPython** that touches the physical
 world — because the IR receiver and high-power IR LED *are* exposed by the
 [`flipperzero`](../micropython/flipperzero-api.md) module. We'll build a working
