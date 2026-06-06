@@ -24,6 +24,11 @@ Anticollision
 :   The NFC handshake that singles out one tag among several and returns its UID/ATQA/SAK
     before any authentication. See [NFC](../signals/nfc.md).
 
+Antenna
+:   A conductor whose free electrons are driven to oscillate (accelerate), radiating an EM
+    wave; resonant near ½λ (dipole) or ¼λ (monopole). See
+    [How Radios Talk](../physics-primer/radio-101.md).
+
 ASK / OOK
 :   Amplitude-Shift Keying / On-Off Keying. Encoding bits by varying (or fully gating) the
     carrier amplitude. The dominant Sub-GHz and IR scheme. See [Modulation](../physics-primer/modulation.md).
@@ -39,6 +44,11 @@ BLE
 Carrier
 :   A steady wave at one chosen frequency that a message is added onto (by modulation). By
     itself it carries no information. See [How Radios Talk](../physics-primer/radio-101.md).
+
+Charge
+:   The fundamental electrical quantity (coulombs, C); electrons carry the mobile negative
+    charge in metals. Moving charge = current; accelerating charge radiates. See
+    [Electricity & Signals 101](../physics-primer/electricity-signals-101.md).
 
 CC1101
 :   The TI sub-gigahertz transceiver behind the Flipper's [Sub-GHz](../signals/sub-ghz.md) app.
@@ -59,6 +69,11 @@ DuckyScript
 
 ECDSA
 :   Elliptic Curve Digital Signature Algorithm (P-256 for U2F). See [U2F](../signals/u2f.md).
+
+Electric field (E)
+:   The force per unit charge that a charge creates in the space around it (V/m). The thing
+    that pushes electrons in a wire or antenna. See
+    [How Radios Talk](../physics-primer/radio-101.md).
 
 EM4100
 :   A common 125 kHz LF RFID chip storing a static, unauthenticated 40-bit ID. See
@@ -85,6 +100,11 @@ HID
 iButton
 :   A Dallas 1-Wire contact key (e.g. DS1990A). See [iButton](../signals/ibutton.md).
 
+Induction (Faraday's law)
+:   A changing magnetic flux through a loop induces a voltage, $\mathcal{E}=-d\Phi_B/dt$. The
+    basis of RFID/NFC power transfer and radio reception. See
+    [How Radios Talk](../physics-primer/radio-101.md).
+
 ISM band
 :   Unlicensed Industrial/Scientific/Medical radio bands (315/433/868/915 MHz) where most
     cheap remotes live.
@@ -97,9 +117,19 @@ Magic card
 :   A special NFC tag whose normally read-only block 0 (and UID) is **writable**, letting the
     Flipper write a full clone (Gen1A/Gen2/Gen4). See [NFC](../signals/nfc.md).
 
+Magnetic field (B)
+:   The field created by moving charge (current); it circles a wire by the right-hand rule
+    ($B=\mu_0 I/2\pi r$). The second half of an EM wave. See
+    [How Radios Talk](../physics-primer/radio-101.md).
+
 Manchester
 :   A line code where every bit has a transition in its middle, keeping sender and receiver in
     sync. Used by 125 kHz RFID. See [Modulation](../physics-primer/modulation.md).
+
+Maxwell's equations
+:   The four laws of electromagnetism; together Faraday + Ampère–Maxwell make a changing E and
+    B sustain each other as a wave travelling at $c=1/\sqrt{\mu_0\varepsilon_0}$. See
+    [How Radios Talk](../physics-primer/radio-101.md).
 
 MIFARE Classic
 :   A widely deployed (and weakly secured) 13.56 MHz card family using CRYPTO1. See
@@ -132,6 +162,10 @@ PWM
 :   Pulse-Width Modulation. A fixed-frequency square wave whose duty cycle sets average
     voltage. `pwm_start`. See [GPIO](../signals/gpio.md).
 
+Resonance (LC)
+:   An inductor–capacitor circuit rings strongest at $f=1/(2\pi\sqrt{LC})$ — physically what
+    "tuning" a receiver to one frequency means. See [How Radios Talk](../physics-primer/radio-101.md).
+
 Rolling code
 :   A remote scheme (KeeLoq etc.) where each press sends a fresh code, defeating naive replay.
     See [Sub-GHz](../signals/sub-ghz.md).
@@ -149,6 +183,11 @@ STM32WB55
 
 T5577
 :   A rewritable 125 kHz tag used to clone LF credentials onto a blank. See [RFID](../signals/rfid-125khz.md).
+
+Transistor
+:   A voltage-controlled switch (MOSFET) that ties a wire to a high or low voltage on command;
+    the MCU toggles these to manufacture a signal $V(t)$. See
+    [Electricity & Signals 101](../physics-primer/electricity-signals-101.md).
 
 U2F / FIDO
 :   Origin-bound public-key second-factor authentication. See [U2F](../signals/u2f.md).

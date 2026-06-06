@@ -107,6 +107,12 @@ bank card, and a TV remote differ mostly in **which frequency** they wiggle at â
 choice decides everything: how big the antenna is, how far the signal reaches, and whether
 you have to *tap* the card or can capture it *from across the street*. That's the next page.
 
+!!! note "Go deeper later"
+    Curious *what is actually waving*, and how a voltage on a wire becomes a wave in the air?
+    That's the dense physics in [Electricity & Signals 101](electricity-signals-101.md) (a
+    signal is a voltage $V(t)$) and [How Radios Talk](radio-101.md) (an **accelerating charge
+    radiates**). You don't need them to continue â€” but they're where the "why" lives.
+
 <div class="quiz" data-title="Test Your Knowledge">
 <script type="application/json">
 [
