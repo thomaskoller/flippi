@@ -16,6 +16,8 @@
 //   freqcompare — two stacked sines, low vs high frequency (beginner)
 //   digital     — a clean square wave spelling 1 0 1 0 with bit labels (beginner)
 //   current     — charge "dots" drifting through a wire (voltage = pressure) (beginner)
+//   bfield      — current in a wire ringed by circular magnetic-field loops (right-hand rule)
+//   antenna     — electrons oscillating in a rod, accelerating and radiating wavefronts
 //   rollingcode — static code (same value) vs rolling code (counter increments)
 //   nearfar     — "hug to read" coils vs an antenna shouting across the room
 //
@@ -687,6 +689,103 @@
     ctx.fillRect(rxr - 4, cy - 10, 4, 20);
   }
 
+  // A current-carrying wire ringed by circular magnetic-field loops (right-hand rule).
+  function bfield(ctx, w, h, t, c) {
+    const cy = h * 0.5;
+    // the wire
+    ctx.strokeStyle = c.fg;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(w, cy);
+    ctx.stroke();
+
+    // moving charges (the current) drifting left→right
+    const n = 12;
+    const speed = 55;
+    ctx.fillStyle = c.primary;
+    for (let i = 0; i < n; i++) {
+      const x = ((i * (w / n) + t * speed) % (w + 16)) - 8;
+      ctx.beginPath();
+      ctx.arc(x, cy, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // concentric B-field loops drawn as ellipses (perspective) around the wire, pulsing
+    const pulse = 0.45 + 0.55 * Math.abs(Math.sin(t * 3));
+    ctx.strokeStyle = c.accent;
+    for (let i = 1; i <= 4; i++) {
+      const rx = i * (w * 0.11);
+      const ry = i * (h * 0.13);
+      ctx.globalAlpha = pulse * (1 - i * 0.16);
+      ctx.lineWidth = 1.6;
+      [w * 0.32, w * 0.68].forEach((cx) => {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx * 0.18, ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+    }
+    ctx.globalAlpha = 1;
+
+    // in/out-of-page markers: ⊙ above the wire, ⊗ below (field circles the wire)
+    ctx.fillStyle = c.accent;
+    ctx.font = "15px system-ui, sans-serif";
+    ctx.fillText("⊙", w * 0.5 - 5, cy - h * 0.28);
+    ctx.fillText("⊗", w * 0.5 - 5, cy + h * 0.33);
+
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("current I →", 8, cy - 8);
+    ctx.fillText("B field circles the wire (right-hand rule)", 8, h - 10);
+  }
+
+  // Electrons oscillating in a vertical rod (driven) that radiate expanding wavefronts.
+  function antenna(ctx, w, h, t, c) {
+    const ax = w * 0.5;
+    const cy = h * 0.5;
+    const rodHalf = h * 0.34;
+    const drive = Math.sin(t * 4);
+
+    // expanding wavefronts (rings), spawned each half-cycle, fading with distance
+    const maxR = Math.max(w, h);
+    for (let k = 0; k < 5; k++) {
+      const phase = (t * 0.55 + k / 5) % 1;
+      const r = phase * maxR * 0.7;
+      ctx.globalAlpha = 0.5 * (1 - phase);
+      ctx.strokeStyle = c.accent;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(ax, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // the rod
+    ctx.strokeStyle = c.fg;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(ax, cy - rodHalf);
+    ctx.lineTo(ax, cy + rodHalf);
+    ctx.stroke();
+
+    // electrons sloshing up/down together (displacement ∝ drive)
+    const nE = 7;
+    ctx.fillStyle = c.primary;
+    for (let i = 0; i < nE; i++) {
+      const base = -rodHalf + (i + 0.5) * (2 * rodHalf) / nE;
+      const y = cy + base + drive * (rodHalf * 0.18);
+      ctx.beginPath();
+      ctx.arc(ax, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // acceleration cue: arrow showing electrons reversing at the extremes
+    ctx.fillStyle = c.fg;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("driven electrons ⇅", 8, 16);
+    ctx.fillText("accelerate → radiate", 8, h - 10);
+  }
+
   const RENDERERS = {
     emwave,
     ask,
@@ -700,6 +799,8 @@
     freqcompare,
     digital,
     current,
+    bfield,
+    antenna,
     rollingcode,
     nearfar,
   };

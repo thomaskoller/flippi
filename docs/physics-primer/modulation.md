@@ -22,7 +22,9 @@ icon: lucide/activity
     A radio does exactly this to its carrier wave, just millions of times a second.
 
 A bare sinusoid carries no information — it's just a tone. **Modulation** varies one of its
-three free parameters to encode data:
+three free parameters to encode data (this $s(t)$ is the radio-frequency cousin of the
+voltage signal $V(t)$ from [Electricity & Signals 101](electricity-signals-101.md) — same
+idea, now riding a carrier):
 
 $$
 s(t) = \underbrace{A(t)}_{\text{brightness}}\,\cos\!\big(2\pi \underbrace{f(t)}_{\text{colour}}\, t + \underbrace{\phi(t)}_{\text{timing}}\big)

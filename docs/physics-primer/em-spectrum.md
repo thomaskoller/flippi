@@ -162,7 +162,9 @@ A receiving antenna couples best when aligned with it — a cross-polarized ante
 20 dB. A simple resonant **quarter-wave** monopole has length $\lambda/4$: at 433 MHz
 that's about 17 cm, which is why a 433 MHz remote with a tiny PCB trace antenna is
 *electrically short* and inefficient (and why your Flipper's range varies wildly with
-orientation and how you hold it).
+orientation and how you hold it). For *why* a $\lambda/4$ rod is the magic length — and what
+the electrons in it are actually doing — see the antenna section of
+[How Radios Talk](radio-101.md#6-what-an-antenna-actually-is-electron-level).
 
 <div class="quiz" data-title="Test Your Knowledge">
 <script type="application/json">
